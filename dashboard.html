@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WanderWise - Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCHGMntlvT-j1r9KcdNRaNsIlHwHfEnjuI"></script>
+</head>
+<body>
+    <!-- Background Elements -->
+    <div class="background-container">
+        <div class="bg-shape bg-shape-1"></div>
+        <div class="bg-shape bg-shape-2"></div>
+        <div class="bg-shape bg-shape-3"></div>
+        <div class="bg-shape bg-shape-4"></div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h1>Holiday Analytics Dashboard</h1>
+                        <p>Track teacher summer break locations</p>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <a href="form.html" class="btn btn-ghost">
+                        <i class="fas fa-plus"></i>
+                        Add Entry
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+4
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Stats Cards -->
+            <div class="stats-section">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number" id="totalTeachers">0</div>
+                            <div class="stat-label">Total Teachers</div>
+                        </div>
+                        <div class="stat-trend">
+                            <i class="fas fa-arrow-up"></i>
+                            <span>100%</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-home"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number" id="stayedHome">0</div>
+                            <div class="stat-label">Stayed Home</div>
+                        </div>
+                        <div class="stat-trend">
+                            <i class="fas fa-percentage"></i>
+                            <span id="homePercentage">0%</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-plane"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number" id="traveled">0</div>
+                            <div class="stat-label">Traveled</div>
+                        </div>
+                        <div class="stat-trend">
+                            <i class="fas fa-percentage"></i>
+                            <span id="travelPercentage">0%</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-globe-asia"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number" id="traveledIndia">0</div>
+                            <div class="stat-label">Traveled in India</div>
+                        </div>
+                        <div class="stat-trend">
+                            <i class="fas fa-percentage"></i>
+                            <span id="indiaPercentage">0%</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-globe-americas"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number" id="traveledAbroad">0</div>
+                            <div class="stat-label">Traveled Abroad</div>
+                        </div>
+                        <div class="stat-trend">
+                            <i class="fas fa-percentage"></i>
+                            <span id="abroadPercentage">0%</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-download"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number">CSV</div>
+                            <div class="stat-label">Export Data</div>
+                        </div>
+                        <div class="stat-trend">
+                            <button class="btn btn-primary btn-sm" onclick="exportToCSV()">
+                                <i class="fas fa-download"></i>
+                                Export
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filters and Controls -->
+            <div class="controls-section">
+                <div class="controls-card">
+                    <div class="controls-header">
+                        <h2>Filters & Controls</h2>
+                        <p>Customize your view of the data</p>
+                    </div>
+                    
+                    <div class="controls-content">
+                        <div class="filter-group">
+                            <label for="locationFilter" class="filter-label">
+                                <i class="fas fa-map-marker-alt"></i>
+                                Filter by Location
+                            </label>
+                            <select id="locationFilter" class="filter-select">
+                                <option value="">All Locations</option>
+                                <option value="India">India</option>
+                                <option value="Abroad">Abroad</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label for="nameSearch" class="filter-label">
+                                <i class="fas fa-search"></i>
+                                Search by Name
+                            </label>
+                            <input type="text" id="nameSearch" class="filter-input" placeholder="Enter teacher name...">
+                        </div>
+
+                        <div class="filter-group">
+                            <label class="filter-label">
+                                <i class="fas fa-filter"></i>
+                                Status Filter
+                            </label>
+                            <div class="filter-buttons">
+                                <button class="filter-btn active" data-filter="all">
+                                    <i class="fas fa-list"></i>
+                                    All
+                                </button>
+                                <button class="filter-btn" data-filter="home">
+                                    <i class="fas fa-home"></i>
+                                    Home
+                                </button>
+                                <button class="filter-btn" data-filter="travel">
+                                    <i class="fas fa-plane"></i>
+                                    Travel
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="filter-actions">
+                            <button class="btn btn-secondary" onclick="clearFilters()">
+                                <i class="fas fa-times"></i>
+                                Clear Filters
+                            </button>
+                            <button class="btn btn-primary" onclick="refreshData()">
+                                <i class="fas fa-sync-alt"></i>
+                                Refresh Data
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Map Section -->
+            <div class="map-section">
+                <div class="map-card">
+                    <div class="map-header">
+                        <div class="map-title">
+                            <h2>Global Holiday Locations</h2>
+                            <p>Interactive map showing where teachers traveled</p>
+                        </div>
+                        <div class="map-controls">
+                            <button class="btn btn-primary btn-sm" id="infoWindowToggle" onclick="toggleInfoWindows()">
+                                <i class="fas fa-info-circle"></i>
+                                <span id="infoWindowToggleText">Info Windows: ON</span>
+                            </button>
+                            <button class="btn btn-ghost btn-sm" onclick="fitMapToMarkers()">
+                                <i class="fas fa-expand-arrows-alt"></i>
+                                Fit to Markers
+                            </button>
+                        </div>
+                    </div>
+                    <div id="map" class="map-container"></div>
+                </div>
+            </div>
+
+            <!-- Data Table -->
+            <div class="table-section">
+                <div class="table-card">
+                    <div class="table-header">
+                        <h2>Teacher Holiday Data</h2>
+                        <p>Complete list of all submissions</p>
+                    </div>
+                    <div class="table-container">
+                        <table id="dataTable" class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Employee ID</th>
+                                    <th>Status</th>
+                                    <th>Location</th>
+                                    <th>Country</th>
+                                    <th>Coordinates</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableBody">
+                                <!-- Data will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="table-footer">
+                        <div class="table-info">
+                            <span id="tableInfo">Showing 0 entries</span>
+                        </div>
+                        <div class="table-pagination">
+                            <button class="btn btn-ghost btn-sm" onclick="previousPage()" id="prevBtn" disabled>
+                                <i class="fas fa-chevron-left"></i>
+                                Previous
+                            </button>
+                            <span class="page-info" id="pageInfo">Page 1 of 1</span>
+                            <button class="btn btn-ghost btn-sm" onclick="nextPage()" id="nextBtn" disabled>
+                                Next
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-container">
+            <div class="loading-spinner">
+                <div class="spinner-ring"></div>
+                <div class="spinner-ring"></div>
+                <div class="spinner-ring"></div>
+            </div>
+            <p>Loading dashboard data...</p>
+        </div>
+    </div>
+
+    <script src="script-dashboard.js"></script>
+</body>
+</html> 

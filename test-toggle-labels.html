@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Toggle Labels & Info Windows</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+        .test-info {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        .map-container {
+            height: 500px;
+            width: 100%;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        .toggle-controls {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        .toggle-btn {
+            background: #ef4444;
+            color: white;
+            border: 2px solid #dc2626;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+        .toggle-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        .toggle-btn.on {
+            background: #10b981;
+            border-color: #059669;
+        }
+    </style>
+</head>
+<body>
+    <div class="background-container">
+        <div class="bg-shape bg-shape-1"></div>
+        <div class="bg-shape bg-shape-2"></div>
+        <div class="bg-shape bg-shape-3"></div>
+        <div class="bg-shape bg-shape-4"></div>
+    </div>
+
+    <div class="test-container">
+        <div class="test-header">
+            <h1>🧪 Test Toggle Labels & Info Windows</h1>
+            <p>Testing toggle functionality between labels and info windows</p>
+        </div>
+
+        <div class="test-info">
+            <h3>How to test:</h3>
+            <ul>
+                <li>✅ <strong>Default State (Info Windows OFF):</strong> Labels should be visible, clicking labels shows small popups</li>
+                <li>✅ <strong>Toggle to ON:</strong> Labels should disappear, clicking markers shows full info windows</li>
+                <li>✅ <strong>Toggle to OFF:</strong> Labels should reappear, clicking labels shows small popups</li>
+                <li>✅ <strong>Label Popups:</strong> Should show teacher name and location only</li>
+                <li>✅ <strong>Info Windows:</strong> Should show full details with company logo</li>
+            </ul>
+        </div>
+
+        <div class="toggle-controls">
+            <h3>Toggle Controls:</h3>
+            <button id="toggleBtn" class="toggle-btn" onclick="toggleMode()">
+                <i class="fas fa-times-circle"></i>
+                <span id="toggleText">Info Windows: OFF</span>
+            </button>
+            <p style="margin-top: 10px; color: #6b7280; font-size: 14px;">
+                <strong>Current Mode:</strong> <span id="currentMode">Labels Visible - Click labels for popups</span>
+            </p>
+        </div>
+
+        <div class="map-container" id="map"></div>
+    </div>
+
+    <script>
+        // Test data
+        const testTeachers = [
+            {
+                name: "John Smith",
+                employee_id: "12345678",
+                status: "travel",
+                location_name: "Paris, France",
+                country: "France",
+                latitude: 48.8566,
+                longitude: 2.3522
+            },
+            {
+                name: "Sarah Johnson",
+                employee_id: "87654321",
+                status: "travel",
+                location_name: "Tokyo, Japan",
+                country: "Japan",
+                latitude: 35.6762,
+                longitude: 139.6503
+            },
+            {
+                name: "Michael Brown",
+                employee_id: "11223344",
+                status: "travel",
+                location_name: "New York, USA",
+                country: "United States",
+                latitude: 40.7128,
+                longitude: -74.0060
+            }
+        ];
+
+        let map;
+        let markers = [];
+        let infoWindowsEnabled = false; // Start with labels visible
+
+        // Initialize map
+        function initializeMap() {
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: { lat: 20, lng: 0 },
+                zoom: 2
+            });
+
+            // Add markers with labels
+            testTeachers.forEach(teacher => {
+                const marker = new google.maps.Marker({
+                    position: { lat: teacher.latitude, lng: teacher.longitude },
+                    map: map,
+                    title: `🏢 ${teacher.name} - ${teacher.location_name}`
+                });
+
+                // Create info window
+                const infoWindow = new google.maps.InfoWindow({
+                    content: `
+                        <div style="padding: 12px; font-family: 'Inter', sans-serif; min-width: 200px;">
+                            <h3 style="margin: 0 0 8px 0; color: #1f2937; font-size: 14px; font-weight: 600;">${teacher.name}</h3>
+                            <p style="margin: 0 0 4px 0; color: #6b7280; font-size: 11px;">Employee ID: ${teacher.employee_id}</p>
+                            <p style="margin: 0; color: #3b82f6; font-size: 12px; font-weight: 500;">
+                                <i class="fas fa-map-marker-alt" style="margin-right: 4px;"></i>
+                                ${teacher.location_name}
+                            </p>
+                            ${teacher.country ? `
+                                <p style="margin: 4px 0 0 0; color: #059669; font-size: 11px; font-weight: 500;">
+                                    <i class="fas fa-globe" style="margin-right: 4px;"></i>
+                                    ${teacher.country}
+                                </p>
+                            ` : ''}
+                        </div>
+                    `
+                });
+
+                marker.infoWindow = infoWindow;
+
+                // Create a custom overlay for the label
+                const labelOverlay = new google.maps.OverlayView();
+                labelOverlay.onAdd = function() {
+                    const div = document.createElement('div');
+                    div.className = 'marker-label';
+                    div.textContent = teacher.name;
+                    div.style.position = 'absolute';
+                    div.style.zIndex = '1000';
+                    div.style.pointerEvents = 'auto';
+                    div.style.cursor = 'pointer';
+                    this.getPanes().overlayImage.appendChild(div);
+                    this.div_ = div;
+                    
+                    // Add click listener to label
+                    div.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        if (!infoWindowsEnabled) {
+                            showLabelPopup(teacher, div);
+                        }
+                    });
+                };
+                
+                labelOverlay.draw = function() {
+                    const projection = this.getProjection();
+                    const position = projection.fromLatLngToDivPixel(
+                        new google.maps.LatLng(teacher.latitude, teacher.longitude)
+                    );
+                    
+                    if (position && this.div_) {
+                        this.div_.style.left = (position.x - this.div_.offsetWidth / 2) + 'px';
+                        this.div_.style.top = (position.y - this.div_.offsetHeight - 40) + 'px';
+                    }
+                };
+                
+                labelOverlay.setMap(map);
+                marker.labelOverlay = labelOverlay;
+                markers.push(marker);
+            });
+
+            // Fit map to markers
+            if (markers.length > 0) {
+                const bounds = new google.maps.LatLngBounds();
+                markers.forEach(marker => bounds.extend(marker.getPosition()));
+                map.fitBounds(bounds);
+            }
+
+            // Update marker click listeners
+            updateMarkerClickListeners();
+        }
+
+        // Show label popup
+        function showLabelPopup(teacher, labelElement) {
+            // Remove any existing popups
+            const existingPopup = document.querySelector('.label-popup');
+            if (existingPopup) {
+                existingPopup.remove();
+            }
+            
+            // Create popup element
+            const popup = document.createElement('div');
+            popup.className = 'label-popup';
+            popup.innerHTML = `
+                <div class="popup-content">
+                    <div class="popup-header">
+                        <h4>${teacher.name}</h4>
+                        <button class="popup-close" onclick="this.parentElement.parentElement.parentElement.remove()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="popup-body">
+                        <p><i class="fas fa-map-marker-alt"></i> ${teacher.location_name}</p>
+                        ${teacher.country ? `<p><i class="fas fa-globe"></i> ${teacher.country}</p>` : ''}
+                    </div>
+                </div>
+            `;
+            
+            // Position popup near the label
+            const labelRect = labelElement.getBoundingClientRect();
+            const mapContainer = document.getElementById('map');
+            const mapRect = mapContainer.getBoundingClientRect();
+            
+            popup.style.position = 'absolute';
+            popup.style.left = (labelRect.left - mapRect.left + labelRect.width / 2) + 'px';
+            popup.style.top = (labelRect.top - mapRect.top - 10) + 'px';
+            popup.style.zIndex = '2000';
+            
+            // Add to map container
+            mapContainer.appendChild(popup);
+            
+            // Auto-remove after 5 seconds
+            setTimeout(() => {
+                if (popup.parentElement) {
+                    popup.remove();
+                }
+            }, 5000);
+            
+            // Close popup when clicking outside
+            document.addEventListener('click', function closePopup(e) {
+                if (!popup.contains(e.target) && !labelElement.contains(e.target)) {
+                    popup.remove();
+                    document.removeEventListener('click', closePopup);
+                }
+            });
+        }
+
+        // Toggle mode
+        function toggleMode() {
+            infoWindowsEnabled = !infoWindowsEnabled;
+            
+            const toggleBtn = document.getElementById('toggleBtn');
+            const toggleText = document.getElementById('toggleText');
+            const toggleIcon = toggleBtn.querySelector('i');
+            const currentMode = document.getElementById('currentMode');
+            
+            if (infoWindowsEnabled) {
+                toggleText.textContent = 'Info Windows: ON';
+                toggleIcon.className = 'fas fa-info-circle';
+                toggleBtn.classList.add('on');
+                currentMode.textContent = 'Info Windows Active - Click markers for full details';
+                
+                // Hide labels
+                markers.forEach(marker => {
+                    if (marker.labelOverlay && marker.labelOverlay.div_) {
+                        marker.labelOverlay.div_.style.display = 'none';
+                    }
+                });
+            } else {
+                toggleText.textContent = 'Info Windows: OFF';
+                toggleIcon.className = 'fas fa-times-circle';
+                toggleBtn.classList.remove('on');
+                currentMode.textContent = 'Labels Visible - Click labels for popups';
+                
+                // Show labels
+                markers.forEach(marker => {
+                    if (marker.labelOverlay && marker.labelOverlay.div_) {
+                        marker.labelOverlay.div_.style.display = 'block';
+                    }
+                });
+            }
+            
+            // Close any open info windows
+            markers.forEach(marker => {
+                if (marker.infoWindow) {
+                    marker.infoWindow.close();
+                }
+            });
+            
+            // Remove any existing label popups
+            const existingPopups = document.querySelectorAll('.label-popup');
+            existingPopups.forEach(popup => popup.remove());
+            
+            // Update marker click listeners
+            updateMarkerClickListeners();
+        }
+
+        // Update marker click listeners
+        function updateMarkerClickListeners() {
+            markers.forEach((marker, index) => {
+                // Remove existing click listeners
+                google.maps.event.clearListeners(marker, 'click');
+                
+                // Add new click listener based on toggle state
+                if (infoWindowsEnabled) {
+                    marker.addListener('click', () => {
+                        if (marker.infoWindow) {
+                            marker.infoWindow.open(map, marker);
+                        }
+                    });
+                }
+            });
+        }
+
+        // Load Google Maps API
+        function loadGoogleMapsAPI() {
+            const script = document.createElement('script');
+            script.src = 'https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places&callback=initializeMap';
+            script.async = true;
+            script.defer = true;
+            document.head.appendChild(script);
+        }
+
+        // Initialize when page loads
+        window.addEventListener('load', loadGoogleMapsAPI);
+    </script>
+</body>
+</html> 

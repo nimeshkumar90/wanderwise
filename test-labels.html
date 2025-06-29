@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Marker Labels</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+        .test-info {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        .map-container {
+            height: 500px;
+            width: 100%;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <div class="background-container">
+        <div class="bg-shape bg-shape-1"></div>
+        <div class="bg-shape bg-shape-2"></div>
+        <div class="bg-shape bg-shape-3"></div>
+        <div class="bg-shape bg-shape-4"></div>
+    </div>
+
+    <div class="test-container">
+        <div class="test-header">
+            <h1>🧪 Test Marker Labels</h1>
+            <p>Testing always-visible marker labels on the map</p>
+        </div>
+
+        <div class="test-info">
+            <h3>What to check:</h3>
+            <ul>
+                <li>✅ Marker labels should be visible on all markers by default</li>
+                <li>✅ Labels should show teacher names</li>
+                <li>✅ Labels should be positioned above markers</li>
+                <li>✅ Labels should have blue background with white text</li>
+                <li>✅ Labels should be styled with rounded corners and shadow</li>
+            </ul>
+        </div>
+
+        <div class="map-container" id="map"></div>
+    </div>
+
+    <script>
+        // Test data
+        const testTeachers = [
+            {
+                name: "John Smith",
+                employee_id: "12345678",
+                status: "travel",
+                location_name: "Paris, France",
+                country: "France",
+                latitude: 48.8566,
+                longitude: 2.3522
+            },
+            {
+                name: "Sarah Johnson",
+                employee_id: "87654321",
+                status: "travel",
+                location_name: "Tokyo, Japan",
+                country: "Japan",
+                latitude: 35.6762,
+                longitude: 139.6503
+            },
+            {
+                name: "Michael Brown",
+                employee_id: "11223344",
+                status: "travel",
+                location_name: "New York, USA",
+                country: "United States",
+                latitude: 40.7128,
+                longitude: -74.0060
+            },
+            {
+                name: "Emily Davis",
+                employee_id: "55667788",
+                status: "travel",
+                location_name: "Sydney, Australia",
+                country: "Australia",
+                latitude: -33.8688,
+                longitude: 151.2093
+            },
+            {
+                name: "David Wilson",
+                employee_id: "99887766",
+                status: "travel",
+                location_name: "Mumbai, India",
+                country: "India",
+                latitude: 19.0760,
+                longitude: 72.8777
+            }
+        ];
+
+        let map;
+        let markers = [];
+
+        // Initialize map
+        function initializeMap() {
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: { lat: 20, lng: 0 },
+                zoom: 2
+            });
+
+            // Add markers with labels
+            testTeachers.forEach(teacher => {
+                const marker = new google.maps.Marker({
+                    position: { lat: teacher.latitude, lng: teacher.longitude },
+                    map: map,
+                    title: `🏢 ${teacher.name} - ${teacher.location_name}`
+                });
+
+                // Create a custom overlay for the label
+                const labelOverlay = new google.maps.OverlayView();
+                labelOverlay.onAdd = function() {
+                    const div = document.createElement('div');
+                    div.className = 'marker-label';
+                    div.textContent = teacher.name;
+                    div.style.position = 'absolute';
+                    div.style.zIndex = '1000';
+                    div.style.pointerEvents = 'none';
+                    this.getPanes().overlayImage.appendChild(div);
+                    this.div_ = div;
+                };
+
+                labelOverlay.draw = function() {
+                    const projection = this.getProjection();
+                    const position = projection.fromLatLngToDivPixel(
+                        new google.maps.LatLng(teacher.latitude, teacher.longitude)
+                    );
+
+                    if (position && this.div_) {
+                        this.div_.style.left = (position.x - this.div_.offsetWidth / 2) + 'px';
+                        this.div_.style.top = (position.y - this.div_.offsetHeight - 40) + 'px';
+                    }
+                };
+
+                labelOverlay.setMap(map);
+                markers.push(marker);
+            });
+
+            // Fit map to markers
+            if (markers.length > 0) {
+                const bounds = new google.maps.LatLngBounds();
+                markers.forEach(marker => bounds.extend(marker.getPosition()));
+                map.fitBounds(bounds);
+            }
+        }
+
+        // Load Google Maps API
+        function loadGoogleMapsAPI() {
+            const script = document.createElement('script');
+            script.src = 'https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places&callback=initializeMap';
+            script.async = true;
+            script.defer = true;
+            document.head.appendChild(script);
+        }
+
+        // Initialize when page loads
+        window.addEventListener('load', loadGoogleMapsAPI);
+    </script>
+</body>
+</html> 
