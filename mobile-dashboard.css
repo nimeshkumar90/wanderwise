@@ -1,0 +1,324 @@
+/* Mobile Dashboard Optimizations for WanderWise */
+
+/* Center Filters & Controls section */
+@media (max-width: 768px) {
+    .controls-section {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: var(--space-6) 0;
+    }
+    
+    .controls-card {
+        width: 100%;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    
+    .controls-header {
+        text-align: center;
+        margin-bottom: var(--space-6);
+    }
+    
+    .controls-header h2 {
+        font-size: var(--font-size-2xl);
+        margin-bottom: var(--space-2);
+    }
+    
+    .controls-content {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-4);
+        align-items: center;
+    }
+    
+    .filter-group {
+        width: 100%;
+        max-width: 400px;
+        text-align: center;
+    }
+    
+    .filter-label {
+        justify-content: center;
+        margin-bottom: var(--space-3);
+    }
+    
+    .filter-select,
+    .filter-input {
+        width: 100%;
+        max-width: 300px;
+        margin: 0 auto;
+        display: block;
+    }
+    
+    .filter-buttons {
+        justify-content: center;
+        gap: var(--space-2);
+    }
+    
+    .filter-btn {
+        flex: 1;
+        max-width: 120px;
+        min-width: 80px;
+    }
+    
+    .filter-actions {
+        flex-direction: column;
+        gap: var(--space-3);
+        width: 100%;
+        max-width: 400px;
+    }
+    
+    .filter-actions .btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    /* Improve pagination styling */
+    .table-footer {
+        flex-direction: column;
+        gap: var(--space-4);
+        text-align: center;
+        padding: var(--space-4);
+    }
+    
+    .table-pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: var(--space-3);
+        flex-wrap: wrap;
+    }
+    
+    .page-info {
+        font-weight: 500;
+        color: var(--gray-700);
+        min-width: 120px;
+    }
+    
+    .table-info {
+        font-size: var(--font-size-sm);
+        color: var(--gray-600);
+    }
+    
+    /* Optimize table for mobile */
+    .table-container {
+        overflow-x: auto;
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-md);
+    }
+    
+    .data-table {
+        min-width: 600px;
+        font-size: var(--font-size-sm);
+    }
+    
+    .data-table th,
+    .data-table td {
+        padding: var(--space-3) var(--space-2);
+    }
+    
+    /* Improve stats cards layout */
+    .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: var(--space-4);
+    }
+    
+    .stat-card {
+        padding: var(--space-4);
+    }
+    
+    .stat-number {
+        font-size: var(--font-size-2xl);
+    }
+    
+    .stat-label {
+        font-size: var(--font-size-sm);
+    }
+    
+    /* Optimize map controls */
+    .map-header {
+        flex-direction: column;
+        gap: var(--space-4);
+        text-align: center;
+    }
+    
+    .map-controls {
+        justify-content: center;
+        gap: var(--space-2);
+    }
+    
+    .map-controls .btn {
+        font-size: var(--font-size-sm);
+        padding: var(--space-2) var(--space-3);
+    }
+}
+
+@media (max-width: 480px) {
+    /* Further optimize for very small screens */
+    .controls-card {
+        padding: var(--space-4);
+        margin: 0 var(--space-2);
+    }
+    
+    .controls-header h2 {
+        font-size: var(--font-size-xl);
+    }
+    
+    .controls-header p {
+        font-size: var(--font-size-sm);
+    }
+    
+    .filter-group {
+        max-width: 100%;
+    }
+    
+    .filter-select,
+    .filter-input {
+        max-width: 100%;
+        padding: var(--space-3);
+        font-size: var(--font-size-base);
+    }
+    
+    .filter-buttons {
+        flex-direction: column;
+        gap: var(--space-2);
+    }
+    
+    .filter-btn {
+        max-width: 100%;
+        padding: var(--space-3) var(--space-4);
+        font-size: var(--font-size-base);
+        min-height: 44px;
+    }
+    
+    .filter-actions {
+        max-width: 100%;
+    }
+    
+    .filter-actions .btn {
+        padding: var(--space-3) var(--space-4);
+        font-size: var(--font-size-base);
+        min-height: 44px;
+    }
+    
+    /* Optimize pagination for small screens */
+    .table-pagination {
+        flex-direction: column;
+        gap: var(--space-2);
+    }
+    
+    .page-info {
+        order: -1;
+        margin-bottom: var(--space-2);
+    }
+    
+    .table-pagination .btn {
+        min-width: 120px;
+        padding: var(--space-3) var(--space-4);
+        font-size: var(--font-size-base);
+        min-height: 44px;
+    }
+    
+    /* Improve table readability on small screens */
+    .data-table {
+        min-width: 500px;
+        font-size: var(--font-size-xs);
+    }
+    
+    .data-table th,
+    .data-table td {
+        padding: var(--space-2) var(--space-1);
+    }
+    
+    /* Optimize stats for small screens */
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-3);
+    }
+    
+    .stat-card {
+        padding: var(--space-3);
+        flex-direction: column;
+        text-align: center;
+        gap: var(--space-2);
+    }
+    
+    .stat-number {
+        font-size: var(--font-size-xl);
+    }
+    
+    .stat-label {
+        font-size: var(--font-size-xs);
+    }
+    
+    .stat-trend {
+        justify-content: center;
+    }
+    
+    /* Hide background shapes on mobile for cleaner look */
+    .bg-shape {
+        display: none;
+    }
+    
+    /* Center header content */
+    .header-content {
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+    }
+    
+    .header-actions {
+        margin-top: var(--space-3);
+    }
+}
+
+/* Enhanced pagination styling for all screen sizes */
+.table-pagination {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    justify-content: center;
+}
+
+.page-info {
+    font-weight: 600;
+    color: var(--primary-600);
+    background: var(--primary-50);
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--primary-200);
+    min-width: 120px;
+    text-align: center;
+}
+
+.table-pagination .btn {
+    transition: all var(--transition-normal);
+    border: 1px solid var(--gray-300);
+}
+
+.table-pagination .btn:hover:not(:disabled) {
+    background: var(--primary-500);
+    color: white;
+    border-color: var(--primary-500);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.table-pagination .btn:disabled {
+    background: var(--gray-100);
+    color: var(--gray-400);
+    border-color: var(--gray-200);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.table-info {
+    font-weight: 500;
+    color: var(--gray-700);
+    background: var(--gray-50);
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--gray-200);
+} 

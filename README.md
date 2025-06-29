@@ -32,7 +32,7 @@ A modern web application for tracking where teachers spent their June summer bre
 CREATE TABLE teacher_holidays (
     id SERIAL PRIMARY KEY,
     name TEXT NOT NULL,
-    employee_id TEXT UNIQUE NOT NULL,
+    employee_id TEXT NOT NULL,
     status TEXT NOT NULL CHECK (status IN ('home', 'travel')),
     location_name TEXT,
     latitude FLOAT8,
@@ -44,7 +44,24 @@ CREATE TABLE teacher_holidays (
 
 3. Get your Supabase URL and anon key from the project settings
 
-### 2. Google Maps API Setup
+### 2. Database Migration for Multiple Entries
+
+**Important**: To support multiple entries per employee ID (up to 4), you need to run a database migration.
+
+1. **Go to your Supabase Dashboard**
+2. **Open the SQL Editor**
+3. **Run the migration script**:
+   ```sql
+   -- Migration: Remove UNIQUE constraint from employee_id
+   ALTER TABLE teacher_holidays DROP CONSTRAINT IF EXISTS teacher_holidays_employee_id_key;
+   ```
+4. **Verify the migration** by running:
+   ```sql
+   \d teacher_holidays
+   ```
+   You should see that the `employee_id` column no longer has a `UNIQUE` constraint.
+
+### 3. Google Maps API Setup
 
 1. Go to [Google Cloud Console](https://console.cloud.google.com)
 2. Create a new project or select existing one
@@ -55,7 +72,7 @@ CREATE TABLE teacher_holidays (
 4. Create API credentials (API Key)
 5. Restrict the API key to your domain for security
 
-### 3. Configuration
+### 4. Configuration
 
 Update the following files with your API keys:
 
@@ -77,7 +94,7 @@ Replace `YOUR_GOOGLE_MAPS_API_KEY` with your actual Google Maps API key in the s
 <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&libraries=places"></script>
 ```
 
-### 4. Deployment
+### 5. Deployment
 
 1. Upload all files to your web server
 2. Ensure HTTPS is enabled (required for Google Maps API)

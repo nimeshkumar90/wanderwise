@@ -5,7 +5,7 @@
 CREATE TABLE teacher_holidays (
     id SERIAL PRIMARY KEY,
     name TEXT NOT NULL,
-    employee_id TEXT UNIQUE NOT NULL,
+    employee_id TEXT NOT NULL,
     status TEXT NOT NULL CHECK (status IN ('home', 'travel')),
     location_name TEXT,
     latitude FLOAT8,

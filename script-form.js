@@ -159,6 +159,7 @@ function validateEmployeeId() {
     if (!employeeId) {
         showFieldMessage(employeeIdMessage, 'Please enter your employee ID', 'error');
         employeeIdInput.classList.remove('valid', 'invalid');
+        hideEntryCountIndicator();
         return false;
     }
     
@@ -166,12 +167,17 @@ function validateEmployeeId() {
         showFieldMessage(employeeIdMessage, 'Employee ID must be exactly 8 digits', 'error');
         employeeIdInput.classList.add('invalid');
         employeeIdInput.classList.remove('valid');
+        hideEntryCountIndicator();
         return false;
     }
     
     showFieldMessage(employeeIdMessage, '✓ Employee ID format is correct', 'success');
     employeeIdInput.classList.add('valid');
     employeeIdInput.classList.remove('invalid');
+    
+    // Check entry count for this employee ID
+    checkEntryCount(employeeId);
+    
     return true;
 }
 
@@ -338,20 +344,26 @@ async function handleFormSubmission(e) {
     try {
         showLoading(true);
         
-        // Check if employee ID already exists
-        const { data: existingEntry, error: checkError } = await supabaseClient
+        // Check if employee ID has reached the limit (4 entries per employee ID)
+        const { data: existingEntries, error: checkError } = await supabaseClient
             .from('teacher_holidays')
             .select('employee_id')
-            .eq('employee_id', employeeId)
-            .single();
+            .eq('employee_id', employeeId);
         
-        if (checkError && checkError.code !== 'PGRST116') {
+        if (checkError) {
+            console.error('Error checking existing entries:', checkError);
             throw checkError;
         }
         
-        if (existingEntry) {
-            showError('You have already submitted your holiday location.');
+        if (existingEntries && existingEntries.length >= 4) {
+            showError('You have already submitted 4 entries for your employee ID. You cannot submit more entries.');
             return;
+        }
+        
+        // Show remaining entries count if any exist
+        if (existingEntries && existingEntries.length > 0) {
+            const remainingEntries = 4 - existingEntries.length;
+            console.log(`Employee ${employeeId} has ${existingEntries.length} existing entries. ${remainingEntries} entries remaining.`);
         }
         
         // Get country if traveling
@@ -381,11 +393,23 @@ async function handleFormSubmission(e) {
             .insert([holidayData]);
         
         if (error) {
-            throw error;
+            console.error('Error inserting data:', error);
+            
+            // Check for specific constraint violations
+            if (error.code === '23505') {
+                showError('This employee ID already has an entry. Please check your employee ID or contact support.');
+            } else if (error.code === '23514') {
+                showError('Invalid data format. Please check your input and try again.');
+            } else {
+                showError(`Database error: ${error.message || 'An error occurred while submitting your data. Please try again.'}`);
+            }
+            return;
         }
         
-        // Show success message with details including country
-        showSuccessWithDetails(name, employeeId, currentStatus === 'travel' ? selectedPlace.name : 'Stayed at Home', country);
+        // Show success message with details including country and entry count
+        const totalEntries = (existingEntries ? existingEntries.length : 0) + 1;
+        const remainingEntries = 4 - totalEntries;
+        showSuccessWithDetails(name, employeeId, currentStatus === 'travel' ? selectedPlace.name : 'Stayed at Home', country, totalEntries, remainingEntries);
         
     } catch (error) {
         console.error('Submission error:', error);
@@ -520,7 +544,7 @@ function showLoading(show) {
 }
 
 // Show success modal with details
-function showSuccessWithDetails(name, employeeId, location, country) {
+function showSuccessWithDetails(name, employeeId, location, country, totalEntries, remainingEntries) {
     successName.textContent = name;
     successEmployeeId.textContent = employeeId;
     successLocation.textContent = location;
@@ -534,6 +558,20 @@ function showSuccessWithDetails(name, employeeId, location, country) {
         successCountryItem.style.display = 'flex';
     } else {
         successCountryItem.style.display = 'none';
+    }
+    
+    // Show entry count information
+    const successEntryCountItem = document.getElementById('successEntryCountItem');
+    const successEntryCount = document.getElementById('successEntryCount');
+    
+    if (totalEntries && remainingEntries !== undefined) {
+        const entryText = remainingEntries > 0 
+            ? `Entry ${totalEntries} of 4 (${remainingEntries} remaining)`
+            : `Entry ${totalEntries} of 4 (Maximum reached)`;
+        successEntryCount.textContent = entryText;
+        successEntryCountItem.style.display = 'flex';
+    } else {
+        successEntryCountItem.style.display = 'none';
     }
     
     successModal.style.display = 'block';
@@ -560,6 +598,9 @@ function resetForm() {
     showFieldMessage(nameMessage, '', '');
     showFieldMessage(employeeIdMessage, '', '');
     showFieldMessage(locationMessage, '', '');
+    
+    // Hide entry count indicator
+    hideEntryCountIndicator();
     
     // Reset status selection
     statusOptions.forEach(option => {
@@ -670,4 +711,50 @@ document.addEventListener('keydown', function(e) {
             nextBtn.click();
         }
     }
-}); 
+});
+
+// Check entry count for an employee ID
+async function checkEntryCount(employeeId) {
+    try {
+        const { data: existingEntries, error } = await supabaseClient
+            .from('teacher_holidays')
+            .select('employee_id')
+            .eq('employee_id', employeeId);
+        
+        if (error) {
+            console.error('Error checking entry count:', error);
+            return;
+        }
+        
+        const entryCount = existingEntries ? existingEntries.length : 0;
+        const remainingEntries = 4 - entryCount;
+        
+        if (entryCount > 0) {
+            showEntryCountIndicator(entryCount, remainingEntries);
+        } else {
+            hideEntryCountIndicator();
+        }
+    } catch (error) {
+        console.error('Error checking entry count:', error);
+    }
+}
+
+// Show entry count indicator
+function showEntryCountIndicator(entryCount, remainingEntries) {
+    const indicator = document.getElementById('entryCountIndicator');
+    const text = document.getElementById('entryCountText');
+    
+    if (remainingEntries > 0) {
+        text.textContent = `You have submitted ${entryCount} entry${entryCount > 1 ? 'ies' : ''}. ${remainingEntries} remaining.`;
+    } else {
+        text.textContent = `You have submitted ${entryCount} entries. Maximum reached.`;
+    }
+    
+    indicator.style.display = 'flex';
+}
+
+// Hide entry count indicator
+function hideEntryCountIndicator() {
+    const indicator = document.getElementById('entryCountIndicator');
+    indicator.style.display = 'none';
+} 

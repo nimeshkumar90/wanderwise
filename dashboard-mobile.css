@@ -1,0 +1,213 @@
+/* Dashboard Mobile Optimizations */
+
+/* Center Filters & Controls section */
+@media (max-width: 768px) {
+    .controls-section {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 2rem 0;
+    }
+    
+    .controls-card {
+        width: 100%;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    
+    .controls-header {
+        text-align: center;
+        margin-bottom: 1.5rem;
+    }
+    
+    .controls-content {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        align-items: center;
+    }
+    
+    .filter-group {
+        width: 100%;
+        max-width: 400px;
+        text-align: center;
+    }
+    
+    .filter-label {
+        justify-content: center;
+        margin-bottom: 0.75rem;
+    }
+    
+    .filter-select,
+    .filter-input {
+        width: 100%;
+        max-width: 300px;
+        margin: 0 auto;
+        display: block;
+    }
+    
+    .filter-buttons {
+        justify-content: center;
+        gap: 0.5rem;
+    }
+    
+    .filter-btn {
+        flex: 1;
+        max-width: 120px;
+        min-width: 80px;
+    }
+    
+    .filter-actions {
+        flex-direction: column;
+        gap: 0.75rem;
+        width: 100%;
+        max-width: 400px;
+    }
+    
+    .filter-actions .btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    /* Improve pagination styling */
+    .table-footer {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+        padding: 1rem;
+    }
+    
+    .table-pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+    }
+    
+    .page-info {
+        font-weight: 500;
+        color: #374151;
+        min-width: 120px;
+    }
+    
+    .table-info {
+        font-size: 0.875rem;
+        color: #6b7280;
+    }
+}
+
+@media (max-width: 480px) {
+    .controls-card {
+        padding: 1rem;
+        margin: 0 0.5rem;
+    }
+    
+    .controls-header h2 {
+        font-size: 1.25rem;
+    }
+    
+    .controls-header p {
+        font-size: 0.875rem;
+    }
+    
+    .filter-group {
+        max-width: 100%;
+    }
+    
+    .filter-select,
+    .filter-input {
+        max-width: 100%;
+        padding: 0.75rem;
+        font-size: 1rem;
+    }
+    
+    .filter-buttons {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .filter-btn {
+        max-width: 100%;
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        min-height: 44px;
+    }
+    
+    .filter-actions {
+        max-width: 100%;
+    }
+    
+    .filter-actions .btn {
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        min-height: 44px;
+    }
+    
+    .table-pagination {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .page-info {
+        order: -1;
+        margin-bottom: 0.5rem;
+    }
+    
+    .table-pagination .btn {
+        min-width: 120px;
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        min-height: 44px;
+    }
+}
+
+/* Enhanced pagination styling for all screen sizes */
+.table-pagination {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    justify-content: center;
+}
+
+.page-info {
+    font-weight: 600;
+    color: #2563eb;
+    background: #eff6ff;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+    border: 1px solid #bfdbfe;
+    min-width: 120px;
+    text-align: center;
+}
+
+.table-pagination .btn {
+    transition: all 0.25s ease-in-out;
+    border: 1px solid #d1d5db;
+}
+
+.table-pagination .btn:hover:not(:disabled) {
+    background: #3b82f6;
+    color: white;
+    border-color: #3b82f6;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.table-pagination .btn:disabled {
+    background: #f3f4f6;
+    color: #9ca3af;
+    border-color: #e5e7eb;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.table-info {
+    font-weight: 500;
+    color: #374151;
+    background: #f9fafb;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
+    border: 1px solid #e5e7eb;
+}
