@@ -59,6 +59,9 @@
     .progress-wrapper{
         display: none;
     }
+    .preview-label{
+        display:none;
+    }
 }
 
 @media (max-width: 480px) {
